@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json.Serialization;
 
@@ -17,13 +18,15 @@ namespace CityInfo.API
     public void ConfigureServices(IServiceCollection services)
     {
       services.AddMvc()
-        .AddJsonOptions(o =>
-        {
-          if (o.SerializerSettings.ContractResolver is DefaultContractResolver castedResolver)
-          {
-            castedResolver.NamingStrategy = null;
-          }
-        });
+        .AddMvcOptions(o => o.OutputFormatters.Add(
+          new XmlDataContractSerializerOutputFormatter()));
+      //.AddJsonOptions(o =>
+      //{
+      //  if (o.SerializerSettings.ContractResolver is DefaultContractResolver castedResolver)
+      //  {
+      //    castedResolver.NamingStrategy = null;
+      //  }
+      //});
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
