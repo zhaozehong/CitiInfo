@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace CityInfo.API
 {
@@ -15,7 +16,22 @@ namespace CityInfo.API
         {
           Id = 1,
           Name = "New York City",
-          Description = "The one with that big park."
+          Description = "The one with that big park.",
+          PointsOfInterest = new List<PointOfInterestDto>()
+          {
+            new PointOfInterestDto()
+            {
+              Id = 1,
+              Name = "Central Park",
+              Description = "The most visited urban park in the United States."
+            },
+            new PointOfInterestDto()
+            {
+              Id = 2,
+              Name = "Empire State Building",
+              Description = "A 102-story skyscraper located in Midtown Manhattan."
+            }
+          }
         },
         new CityDto()
         {
@@ -30,6 +46,10 @@ namespace CityInfo.API
           Description = "The one with that big tower."
         }
       };
+    }
+    public CityDto GetCity(int id)
+    {
+      return this.Cities.FirstOrDefault(p => p.Id == id);
     }
   }
 }

@@ -30,6 +30,7 @@ namespace CityInfo.API
         app.UseExceptionHandler();
       }
 
+      app.UseStatusCodePages(); // add this will show status code text like 404 on the browser page. or user needs to open developer tools to see this
       app.UseMvc();
 
       //app.Run((context) =>
