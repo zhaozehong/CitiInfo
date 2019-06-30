@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.JsonPatch;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,7 +18,7 @@ namespace CityInfo.API.Controllers
         return NotFound();
       return Ok(city.PointsOfInterest);
     }
-    [HttpGet("{cityId}/pointsofinterest/{id}", Name="GetPointOfInterest")]
+    [HttpGet("{cityId}/pointsofinterest/{id}", Name = "GetPointOfInterest")]
     public IActionResult GetPointOfInterest(int cityId, int id)
     {
       var city = CitiesDataStore.Current.GetCity(cityId);
@@ -44,7 +45,7 @@ namespace CityInfo.API.Controllers
         return BadRequest(ModelState);
 
       var city = CitiesDataStore.Current.GetCity(cityId);
-      if(city == null)
+      if (city == null)
         return NotFound();
 
       var finalPointOfInterest = new PointOfInterestDto()
@@ -85,5 +86,42 @@ namespace CityInfo.API.Controllers
       return NoContent(); // as the consumer already has all the information
     }
 
+    [HttpPatch("{cityId}/pointsofinterest/{id}")]
+    public IActionResult PartiallyUpdatePointOfInterest(int cityId, int id, [FromBody]JsonPatchDocument<PointOfInterestForUpdateDto> patchDoc)
+    {
+      if (patchDoc == null)
+        return NotFound();
+
+      var city = CitiesDataStore.Current.GetCity(cityId);
+      if (city == null)
+        return NotFound();
+
+      var point = city.PointsOfInterest.FirstOrDefault(p => p.Id == id);
+      if (point == null)
+        return NotFound();
+
+      var pointToPatch = new PointOfInterestForUpdateDto()
+      {
+        Name = point.Name,
+        Description = point.Description
+      };
+
+      patchDoc.ApplyTo(pointToPatch, ModelState);
+
+      if (!ModelState.IsValid)
+        return BadRequest(ModelState);
+
+      if (pointToPatch.Description == pointToPatch.Name)
+        ModelState.AddModelError("Description", "The provided description should be different from the name.");
+
+      TryValidateModel(pointToPatch);
+      if (!ModelState.IsValid)
+        return BadRequest(ModelState);
+
+      point.Name = pointToPatch.Name;
+      point.Description = pointToPatch.Description;
+
+      return NoContent(); // as the consumer already has all the information
+    }
   }
 }
