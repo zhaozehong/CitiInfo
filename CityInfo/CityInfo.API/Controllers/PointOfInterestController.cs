@@ -34,6 +34,12 @@ namespace CityInfo.API.Controllers
       {
         // log the detailed information to log
         _logger.LogCritical($"Exception while getting points of interest for city with id {cityId}.", ex);
+        _logger.LogTrace($"----------------LogTrace()", ex);
+        _logger.LogDebug($"----------------LogDebug()", ex);
+        _logger.LogInformation($"----------------LogInformation()", ex);
+        _logger.LogWarning($"----------------LogWarning()", ex);
+        _logger.LogError($"----------------LogError()", ex);
+        _logger.LogCritical($"----------------LogCritical()", ex);
 
         // don't log the detailed information to the consumer, just provide a message indicating an error happened.
         return StatusCode(500, "A problem happened while handling your request.");
