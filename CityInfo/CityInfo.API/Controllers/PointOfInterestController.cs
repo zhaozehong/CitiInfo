@@ -123,5 +123,20 @@ namespace CityInfo.API.Controllers
 
       return NoContent(); // as the consumer already has all the information
     }
+    [HttpDelete("{cityId}/pointsofinterest/{id}")]
+    public IActionResult DeletePointOfInterest(int cityId, int id)
+    {
+      var city = CitiesDataStore.Current.GetCity(cityId);
+      if (city == null)
+        return NotFound();
+
+      var point = city.PointsOfInterest.FirstOrDefault(p => p.Id == id);
+      if (point == null)
+        return NotFound();
+
+      city.PointsOfInterest.Remove(point);
+
+      return NoContent();
+    }
   }
 }
