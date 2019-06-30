@@ -37,6 +37,12 @@ namespace CityInfo.API.Controllers
       if (pointOfInterest == null)
         return NotFound();
 
+      if (pointOfInterest.Description == pointOfInterest.Name)
+        ModelState.AddModelError("Description", "The provided description should be different from the name.");
+
+      if (!ModelState.IsValid)
+        return BadRequest(ModelState);
+
       var city = CitiesDataStore.Current.GetCity(cityId);
       if(city == null)
         return NotFound();
